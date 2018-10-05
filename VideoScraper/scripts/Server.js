@@ -1,10 +1,19 @@
-/**
- * http://usejsdoc.org/
- */
-var http = require('http');
+var http = require('http'),
+    fs = require('fs');
 
-//crea un oggetto server:
-http.createServer(function (req, res) {
-  res.write('Hello World!');
-  res.end(); 
+var htmlFile;
+var cssFile;
+
+fs.readFile('./index.html', function(err, data) {
+    if (err){
+        throw err;
+    }
+    htmlFile = data;
+});
+
+var server = http.createServer(function (request, response) {
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(htmlFile);
+    response.end();
 }).listen(8080);
+

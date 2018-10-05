@@ -12,7 +12,7 @@ const urls = ['https://www.lemonde.fr/videos/','https://edition.cnn.com/videos',
 in output una lista dei json estratti da diffbot stesso*/
 const puppeteer = require('puppeteer');
 (async () => {
-	const browser = await puppeteer.launch({headless:false});
+	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 	const difUrl="https://www.diffbot.com/products/automatic/video/";
 	await page.goto(difUrl, { 'waitUntil' : 'networkidle0' } );
@@ -25,7 +25,7 @@ const puppeteer = require('puppeteer');
 		      document.querySelector('input').value = a;
 		    }, a);
 		await page.click('.btn.testdrive-submit');
-		await page.waitFor(3000);
+		await page.waitFor(2000);
 		let pages = await browser.pages();
 		const page2=pages[2];
 		await page2.waitForSelector('.tab-content');
