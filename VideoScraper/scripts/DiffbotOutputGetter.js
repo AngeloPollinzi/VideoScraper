@@ -28,7 +28,7 @@ const puppeteer = require('puppeteer');
 		await page.waitFor(2000);
 		let pages = await browser.pages();
 		const page2=pages[2];
-		await page2.waitForSelector('.tab-content');
+		await page2.waitForSelector('span.js-object');
 		const textContent = await page2.evaluate(() => document.querySelector('span.js-object').textContent);
 		console.log(textContent);
 		page2.close();

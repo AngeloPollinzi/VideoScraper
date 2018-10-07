@@ -1,8 +1,7 @@
 var http = require('http'),
-    fs = require('fs');
+fs = require('fs');
 
 var htmlFile;
-var cssFile;
 
 fs.readFile('./index.html', function(err, data) {
     if (err){
@@ -16,4 +15,3 @@ var server = http.createServer(function (request, response) {
     response.write(htmlFile);
     response.end();
 }).listen(8080);
-
