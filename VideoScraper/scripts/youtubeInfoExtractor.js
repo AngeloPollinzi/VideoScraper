@@ -1,5 +1,5 @@
 var youtubedl = require('youtube-dl');
-var url = 'https://www.youtube.com/watch?v=48Fg-j11XE0';
+var url = 'https://www.youtube.com/watch?v=nUb92frfstc';
 // Optional arguments passed to youtube-dl.
 var options = ['--username=user', '--password=hunter2'];
 youtubedl.getInfo(url, options, function(err, info) {
