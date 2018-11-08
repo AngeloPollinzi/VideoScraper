@@ -3,6 +3,8 @@ var videoplayer=require("./videoplayer.js");
 // Tenta di trovare l'url cercando nel tag <video>
 var estract= async function estract(url,page){
 	
+	await page.goto(url,{waitUntil:'networkidle0',timeout: 0});
+	
 	await videoplayer.play(url,page);
 	
 	const video = await page.evaluate(() => {

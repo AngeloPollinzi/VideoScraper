@@ -2,12 +2,12 @@ const puppeteer = require('puppeteer');
 //task manager crea tutti i tipi di estrattori. 
 var estractor1=require("./videosrc.js");
 var estractor2=require("./youtube.js");
-var estractor3=require("./httplog.js");
+var estractor3=require("./httpsniffer.js");
 
 const urls = [
 	'https://www.wsj.com/video/what-the-election-of-jair-bolsonaro-means-for-brazil/4F79BD86-F2D4-4DB6-A105-10AE9255C5F3.html',
-	'https://www.myrtlebeachonline.com/news/local/article217455180.html#storylink=mainstage',
 	'https://www.ilmessaggero.it/politica/m5s_decreto_sicurezza_nugnes_m5s_di_maio-4074284.html',
+	'https://www.myrtlebeachonline.com/news/local/article217455180.html#storylink=mainstage',
 	'http://www.journalgazette.net/sports/colleges/purdue/20181017/boilers-think-big-against-buckeyes',
 	'https://triblive.com/home/video/'
 //	'http://video.denverpost.com/',
