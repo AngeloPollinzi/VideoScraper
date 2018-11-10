@@ -1,4 +1,3 @@
-var videoplayer=require("./videoplayer.js");
 
 var estract= async function estract(url,page){
 	
@@ -25,9 +24,6 @@ var estract= async function estract(url,page){
 				console.log(result);
 		}
 	});
-	
-	await page.goto(url,{timeout: 0});
-	await videoplayer.play(url,page);
 }
 
 module.exports.estract = estract;
