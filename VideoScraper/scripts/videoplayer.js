@@ -1,36 +1,33 @@
 //analizza la pagina e cerca di trovare il video per farlo partire
 var play= async function play(url,page){
 
-	let videoElem1= await page.$("div[class*='video']");
 	
-	let videoElem2= await page.$("div[class*='player']");
+	const selectors=[];
+	selectors.push("div[class*='video']");
+	selectors.push("div[class*='player']");
+	selectors.push("img[class*='video']");
+	selectors.push("img[class*='player']");
+	selectors.push("figure[class*='video']");
+	selectors.push("figure[class*='player']");
 	
-	let videoElem3= await page.$("img[class*='video']");
-	
-	let videoElem4= await page.$("img[class*='player']");
-	
-	let videoElem5= await page.$("figure[class*='video']");
-	
-	let videoElem6= await page.$("figure[class*='player']");
-	
-	if(videoElem1){
-		videoElem1.click();
-	}
-	if(videoElem2){
-		videoElem2.click();
-	}
-	if(videoElem3){
-		videoElem3.click();
-	}
-	if(videoElem4){
-		videoElem4.click();
-	}
-	if(videoElem5){
-		videoElem5.click();
-	}
-	if(videoElem6){
-		videoElem6.click();
-	}
+	await page.evaluate((selectors) => {
+		let maxHeight=0; // l'altezza dell'elemento piu' alto
+		let maxWidth=0;	// la larghezza dell'elemento piu' largo
+		let largestElem;  // l'elemento piu' alto 
+		for (let i = 0; i < selectors.length; i++) {
+			$("*",selectors[i]).each(function () {
+			    $this = $(this);
+			    if ( $this.outerHeight() > maxHeight && $this.outerWidth() > maxWidth) {
+			    	largestElem=this;
+			        maxHeight=$this.outerHeight();
+			        maxWidth=$this.outerWidth();
+			    }
+			});
+			if(largestElem!=null){
+				largestElem.click();
+			}
+		}
+	},selectors);
 }
 
 module.exports.play= play;
