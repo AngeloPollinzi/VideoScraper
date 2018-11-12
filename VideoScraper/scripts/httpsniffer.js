@@ -1,6 +1,6 @@
 
-var estract= async function estract(url,page){
-	
+var estract= async function estract(page){
+
 	page.on('response', async response => {
 		const status = response.status()
 		if ( status && !(status > 299 && status < 400)&& !(status === 204)){
@@ -30,7 +30,7 @@ module.exports.estract = estract;
 
 function videoContent(text){
 	
-	if(text.includes(".mp4") || text.includes(".m3u8") || text.includes(".webm") || text.includes(".avi"))
+	if(text.includes(".mp4") || text.includes(".m3u8") || text.includes(".webm") || text.includes(".ogg"))
 		return true;
 	
 	return false;
@@ -41,7 +41,7 @@ function getVideoInfo(obj){
 	
 	for(var key in obj){
 		if(obj.hasOwnProperty(key) && typeof obj[key] != "object" &&  obj[key] !== null &&
-			key.match(/url|source|src|link/i)!==null && obj[key].match(/.*\.mp4|\.m3u8|\.webm|\.avi.*/)!==null ){
+			key.match(/url|source|src|link/i)!==null && obj[key].match(/.*\.mp4|\.m3u8|\.webm|\.ogg.*/)!==null ){
 			return obj[key];
 		}
 		

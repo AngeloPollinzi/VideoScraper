@@ -1,7 +1,7 @@
 var youtubedl = require('youtube-dl');
 
-var estract= async function estract(url,page){
-	
+var estract= async function estract(page){
+
 	//cerco il link alla pagina youtube 
 	var youtubeLink = await page.evaluate(() => {
 		const node=document.querySelector("link[href*='https://www.youtube.com/watch?v=']");
