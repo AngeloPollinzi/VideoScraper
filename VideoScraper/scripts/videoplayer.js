@@ -1,12 +1,12 @@
 //analizza la pagina e cerca di trovare il video per farlo partire
-var play= async function play(page){
+var play = async function play(page){
 
 	const video=await page.$('video');
 	if(video){
-		console.log("Trovato un tag video da cliccare!")
 		video.click();
+		return;
 	}
-	
+
 	if(video==null){
 		const selectors=[];
 		selectors.push("div[class*='video']");
@@ -17,23 +17,34 @@ var play= async function play(page){
 		selectors.push("figure[class*='player']");
 		
 		await page.evaluate((selectors) => {
-			let maxHeight=0; // l'altezza dell'elemento piu' alto
-			let maxWidth=0;	// la larghezza dell'elemento piu' largo
-			let largestElem;  // l'elemento piu' grande
-			for (let i = 0; i < selectors.length; i++) {
-				$("*",selectors[i]).each(function () {
-					$this = $(this);
-					if ( $this.outerHeight() * $this.outerWidth() > maxHeight * maxWidth) {
-						largestElem=this;
-						maxHeight=$this.outerHeight();
-						maxWidth=$this.outerWidth();
-					}
-				});
-				if(largestElem!=null){
-					largestElem.click();
+			var largestElem;  // l'elemento piu' grande
+			try{ 
+				//funzione che va a restituire un array ordinato in modo crescente in base alle dimensioni
+				function scanSizes(root) {
+					return [].map.call(root, function(node) {
+						var bounds = node.getBoundingClientRect();
+						return node;
+					}).sort(function(x, y) {
+						var a = x.area, b= y.area;
+						return a > b ? -1 : a < b ? 1 : 0;
+					});
 				}
+				for (let i = 0; i < selectors.length; i++) {
+					var elements=document.querySelectorAll(selectors[i]);
+					var sizes;
+					if(elements){
+						sizes=scanSizes(elements);
+						largestElem = sizes[sizes.length-1];
+						if(largestElem){
+							largestElem.click();
+							return ;
+						}
+					}
+				}
+			}catch(err){
+				console.log(err);
 			}
-		},selectors);
+		}, selectors );
 	}
 }
 
