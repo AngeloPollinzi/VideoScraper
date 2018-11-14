@@ -3,14 +3,20 @@ const puppeteer = require('puppeteer');
 var estractor1=require("./tagInspector.js");
 var estractor2=require("./youtube.js");
 var estractor3=require("./javascriptInspector.js");
-var estractor4=require("./httpsniffer.js");
+var estractor4=require("./dataAttributes.js");
+var estractor5=require("./metadataInspector.js");
+var estractor6=require("./httpsniffer.js");
 var videoplayer=require("./videoplayer.js");
 
 const estractors=[];
 estractors.push(estractor2);
 estractors.push(estractor3);
+estractors.push(estractor4);
+estractors.push(estractor5);
 
 const urls = [
+	/*facebookOG*/'http://brainerddispatch.com/video/Tr3SJXNe',
+	/*data-attributes*/ 'https://www.cnet.com/cnet-top-5/',
 	/*javascript*/ 'http://www.espn.com/nfl/story/_/id/25206920/week-11-2018-nfl-power-rankings-season-defining-stats-every-defense', 
 	/*javascript*/ 'https://www.washingtonpost.com/video/entertainment/how-to-be-a-journalist/reporting-on-fashion-in-the-instagram-age-with-robin-givhan--how-to-be-a-journalist/2018/09/14/b984aa80-b83f-11e8-ae4f-2c1439c96d79_video.html?utm_term=.dbe0408d678f',
 	/*javascript*/ 'http://wqow.com/news/top-stories/2018/10/23/watch-live-search-for-evidence-in-barron-county/', 
@@ -119,7 +125,7 @@ async function analysis(doc){
 	}
 
 	if(HttpLogFlag===0){
-		res = await estractor4.estract(doc);
+		res = await estractor6.estract(doc);
 		HttpLogFlag++;
 	}
 	return res;
