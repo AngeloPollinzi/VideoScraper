@@ -6,19 +6,32 @@ var estract= async function estract(page){
 		let divs = Array.from(document.querySelectorAll('div'));
 		let values=[];
 		divs.map(div => {
-				Array.prototype.slice.call(div.attributes).forEach(function(item) {
-					if(item.name.startsWith('data-')){
-						values.push(item.value);
-					}
-				});
+			Array.prototype.slice.call(div.attributes).forEach(function(item) {
+				if(item.name.startsWith('data-')){
+					values.push(item.value);
+				}
+			});
 	    });
 		return values;
 	});
 
 	for(const item of data){
-		var result=item.match(/https?[:/]+(www\.)?[-\]_\.~!\*'();:@&=+$,\/?%#\[A-z0-9]+\.(mp4|m3u8|webm|ogg)[-\]_\.~!\*'();:@&=+$,\/?%#\[A-z0-9]*/g);
-		if(result){
-			return result[0];
+		var jsonformat= item.match(/\{.*\}/); //se il contenuto matcha con un formato json
+		if(jsonformat){
+			try{
+				var json=JSON.parse(jsonformat);
+				if(json.playlist){
+					return json.playlist[0];
+				}
+				if(json.video){
+					return json.video;
+				}
+				if(json.player){
+					return json.player;
+				}
+			}catch(err){
+				console.log("Data-Attribute Inspection Error: Errore durante la fase di parserizzazione di un JSON")
+			}
 		}
 	}
 	

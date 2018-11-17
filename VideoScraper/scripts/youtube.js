@@ -1,7 +1,6 @@
-var youtubedl = require('youtube-dl');
+const { getInfo } = require('ytdl-getinfo')
 
 var estract= async function estract(page){
-
 	//cerco il link alla pagina youtube 
 	var youtubeLink = await page.evaluate(() => {
 		const node=document.querySelector("link[href*='https://www.youtube.com/watch?v=']");
@@ -11,12 +10,17 @@ var estract= async function estract(page){
 	});
 
 	if(youtubeLink){
-		//se lo trovo lo passo all'API
-		youtubedl.getInfo(youtubeLink, function(err, info) {
-			if (err) throw err;
-			return info.url;
-//		return info.title+" "+info.url+" "+info.duration+" "+info.upload_date+" "+info.resolution;
+		var output={}
+		getInfo(youtubeLink).then(info => {
+			// info.items[0] should contain the output of youtube-dl --dump-json
+			output["title"]=info.items[0].title;
+			output["duration"]=info.items[0].duration;
+			output["upload_date"]=info.items[0].upload_date;
+			output["resolution"]=info.items[0].resolution;
+			output["url"]=info.items[0].url;
 		});
+		await page.waitFor(10000);
+		return output;
 	}
 }	
 	

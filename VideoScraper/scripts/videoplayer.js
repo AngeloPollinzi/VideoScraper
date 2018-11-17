@@ -7,45 +7,43 @@ var play = async function play(page){
 		return;
 	}
 
-	if(video==null){
-		const selectors=[];
-		selectors.push("div[class*='video']");
-		selectors.push("div[class*='player']");
-		selectors.push("img[class*='video']");
-		selectors.push("img[class*='player']");
-		selectors.push("figure[class*='video']");
-		selectors.push("figure[class*='player']");
-		
-		await page.evaluate((selectors) => {
-			var largestElem;  // l'elemento piu' grande
-			try{ 
-				//funzione che va a restituire un array ordinato in modo crescente in base alle dimensioni
-				function scanSizes(root) {
-					return [].map.call(root, function(node) {
-						var bounds = node.getBoundingClientRect();
-						return node;
-					}).sort(function(x, y) {
-						var a = x.area, b= y.area;
-						return a > b ? -1 : a < b ? 1 : 0;
-					});
-				}
-				for (let i = 0; i < selectors.length; i++) {
-					var elements=document.querySelectorAll(selectors[i]);
-					var sizes;
-					if(elements){
-						sizes=scanSizes(elements);
-						largestElem = sizes[sizes.length-1];
-						if(largestElem){
-							largestElem.click();
-							return ;
-						}
+	const selectors=[];
+	selectors.push("div[class*='video']");
+	selectors.push("div[class*='player']");
+	selectors.push("img[class*='video']");
+	selectors.push("img[class*='player']");
+	selectors.push("figure[class*='video']");
+	selectors.push("figure[class*='player']");
+	
+	await page.evaluate((selectors) => {
+		var largestElem;  // l'elemento piu' grande
+		try{ 
+			//funzione che va a restituire un array ordinato in modo crescente in base alle dimensioni
+			function scanSizes(root) {
+				return [].map.call(root, function(node) {
+					var bounds = node.getBoundingClientRect();
+					return node;
+				}).sort(function(x, y) {
+					var a = x.area, b= y.area;
+					return a > b ? -1 : a < b ? 1 : 0;
+				});
+			}
+			for (let i = 0; i < selectors.length; i++) {
+				var elements=document.querySelectorAll(selectors[i]);
+				var sizes;
+				if(elements){
+					sizes=scanSizes(elements);
+					largestElem = sizes[sizes.length-1];
+					if(largestElem){
+						largestElem.click();
+						return ;
 					}
 				}
-			}catch(err){
-				console.log(err);
 			}
-		}, selectors );
-	}
+		}catch(err){
+			console.log(err);
+		}
+	}, selectors );
 }
 
 module.exports.play= play;
