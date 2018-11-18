@@ -15,10 +15,10 @@ const estractors=[];
 //estractors.push(estractor5);
 
 const urls = [
+	/*http-log*/'http://www.journalgazette.net/sports/colleges/purdue/20181017/boilers-think-big-against-buckeyes',
 	/*http-log*/'https://www.wsj.com/video/what-the-election-of-jair-bolsonaro-means-for-brazil/4F79BD86-F2D4-4DB6-A105-10AE9255C5F3.html',
 	/*http-log*/'https://www.myrtlebeachonline.com/news/local/article217455180.html#storylink=mainstage',
 	/*http-log*/'https://www.ilmessaggero.it/politica/m5s_decreto_sicurezza_nugnes_m5s_di_maio-4074284.html',
-	/*http-log*/'http://www.journalgazette.net/sports/colleges/purdue/20181017/boilers-think-big-against-buckeyes',
 	/*http-log*/'https://triblive.com/home/video/',
 	/*Youtube*/'http://mynorthwest.com/1144863/medved-first-man-review/',
 	/*data-attributes*/ 'https://www.cnet.com/cnet-top-5/',
@@ -78,6 +78,8 @@ const selectAttr={
 	
 	// creo una nuova pagina nel browser
 	const page = await browser.newPage();
+
+	HttpLogListener.listen(page);
 	
 	// man mano passo i miei url agli estrattori che mi restituiranno il
 	// risultato
@@ -88,7 +90,6 @@ const selectAttr={
 		await page.goto(url,{waitUntil:'domcontentloaded',timeout: 0});
 		
 		// analisi statica sul dom e i child frames, avvio anche il listener del traffico HTTP
-		HttpLogListener.listen(page);
 		result = await analysis(page);
 		
 		// se il controllo statico fallisce provo ad avviare il video e a ripetere l'operazione
@@ -107,7 +108,6 @@ const selectAttr={
 		
 		console.log(result);
 		
-		HttpLogListener.stop(page);
 		console.log("--------------------------------")
 	}
 	// quando ho finito chiudo il browser
