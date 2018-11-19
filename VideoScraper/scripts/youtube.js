@@ -12,7 +12,6 @@ var estract= async function estract(page){
 	if(youtubeLink){
 		var output={}
 		getInfo(youtubeLink).then(info => {
-			// info.items[0] should contain the output of youtube-dl --dump-json
 			output["title"]=info.items[0].title;
 			output["duration"]=info.items[0].duration;
 			output["upload_date"]=info.items[0].upload_date;

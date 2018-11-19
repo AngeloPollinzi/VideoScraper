@@ -9,17 +9,12 @@ var HttpLogListener=require("./HttpLogListener.js");
 var videoplayer=require("./videoplayer.js");
 
 const estractors=[];
-//estractors.push(estractor2);
-//estractors.push(estractor3);
-//estractors.push(estractor4);
-//estractors.push(estractor5);
+estractors.push(estractor2);
+estractors.push(estractor3);
+estractors.push(estractor4);
+estractors.push(estractor5);
 
 const urls = [
-	/*http-log*/'http://www.journalgazette.net/sports/colleges/purdue/20181017/boilers-think-big-against-buckeyes',
-	/*http-log*/'https://www.wsj.com/video/what-the-election-of-jair-bolsonaro-means-for-brazil/4F79BD86-F2D4-4DB6-A105-10AE9255C5F3.html',
-	/*http-log*/'https://www.myrtlebeachonline.com/news/local/article217455180.html#storylink=mainstage',
-	/*http-log*/'https://www.ilmessaggero.it/politica/m5s_decreto_sicurezza_nugnes_m5s_di_maio-4074284.html',
-	/*http-log*/'https://triblive.com/home/video/',
 	/*Youtube*/'http://mynorthwest.com/1144863/medved-first-man-review/',
 	/*data-attributes*/ 'https://www.cnet.com/cnet-top-5/',
 	/*json+ld*/'https://wnyt.com/news/st-johnsville-michaela-macvilla-missing-woman-found-dead/5110737/',
@@ -37,6 +32,11 @@ const urls = [
 	/*javascript*/ 'https://video.gazzetta.it/liga-parla-presidente-javier-tebas-noi-piu-amati-senza-cr7/f7ad373c-dc48-11e8-a48f-8de672fea597?intcmp=VideoBar&vclk=VideoBar%7Cliga-parla-presidente-javier-tebas-noi-piu-amati-senza-cr7',
 	/*javascript*/ 'http://www.pireport.org/articles/2017/03/14/grappling-bomb-britain%E2%80%99s-nuclear-testing-kiribati',
 	/*javascript*/ 'https://www.keyt.com/video', 
+	/*http-log*/'https://triblive.com/home/video/',
+	/*http-log*/'https://www.ilmessaggero.it/politica/m5s_decreto_sicurezza_nugnes_m5s_di_maio-4074284.html',
+	/*http-log*/'http://www.journalgazette.net/sports/colleges/purdue/20181017/boilers-think-big-against-buckeyes',
+	/*http-log*/'https://www.wsj.com/video/what-the-election-of-jair-bolsonaro-means-for-brazil/4F79BD86-F2D4-4DB6-A105-10AE9255C5F3.html',
+	/*http-log*/'https://www.myrtlebeachonline.com/news/local/article217455180.html#storylink=mainstage',
 	'http://video.italiaoggi.it/classcnbc/tg-flash/Indici-positivi-in-avvio-di-seduta-a-Wall-Street-81542/',
 	'https://www.wsls.com/news/national/mexico-beach-residents-begin-returning-after-michael',
 	'http://www.channel4000.com/videos',
@@ -79,6 +79,7 @@ const selectAttr={
 	// creo una nuova pagina nel browser
 	const page = await browser.newPage();
 
+	// mi metto in ascolto del traffico
 	HttpLogListener.listen(page);
 	
 	// man mano passo i miei url agli estrattori che mi restituiranno il
@@ -89,10 +90,10 @@ const selectAttr={
 		
 		await page.goto(url,{waitUntil:'domcontentloaded',timeout: 0});
 		
-		// analisi statica sul dom e i child frames, avvio anche il listener del traffico HTTP
+		// analisi statica sul DOM e i child frames
 		result = await analysis(page);
 		
-		// se il controllo statico fallisce provo ad avviare il video e a ripetere l'operazione
+		// se il controllo statico fallisce provo faccio play e ripeto il controllo su DOM e child frames
 		if(!result){
 			await videoplayer.play(page);
 			await page.waitFor(10000);
@@ -108,7 +109,8 @@ const selectAttr={
 		
 		console.log(result);
 		
-		console.log("--------------------------------")
+		console.log("-----------------------------------------------------------------------------");
+		console.log("-----------------------------------------------------------------------------");
 	}
 	// quando ho finito chiudo il browser
 	await browser.close();
@@ -116,22 +118,19 @@ const selectAttr={
 
 
 async function analysis(doc){
-	
-	let res;
-	
-	for (key in selectAttr) {
-		res = await estractor1.estract(doc,key,selectAttr[key]);
-		if(res)
-			return res;
-	}
-	
-	for (let i = 0; i < estractors.length; i++) {
-		res = await estractors[i].estract(doc);
-		if(res)
-			return res;
-	}
-	
-	return res;
+	await Promise.all([
+		estractor1.estract(doc,"video","src"),
+		estractor1.estract(doc,"video>source","src"),
+		estractor1.estract(doc,"object[data*='.swf'],object[data*='.mp4'],object[data*='.ogg'],object[data*='.webm']","data"),
+		estractor1.estract(doc,"iframe[src*='.mp4'],iframe[src*='.webm'],iframe[src*='.swf'],iframe[src*='.ogg']","src"),
+		estractor1.estract(doc,"embed[src*='.mp4'],embed[src*='.webm'],embed[src*='.swf'],embed[src*='.ogg']","src"),
+		estractor2.estract(doc), 
+		estractor3.estract(doc),
+		estractor4.estract(doc),
+		estractor5.estract(doc)
+	]).then(result => { 
+		  console.log(result);
+	});
 	
 }
 

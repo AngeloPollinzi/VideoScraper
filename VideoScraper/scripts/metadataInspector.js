@@ -1,6 +1,5 @@
 
 var estract= async function estract(page){
-
 	/*Analizzatore dei metadati non strutturati per facebook open graph e twitter player stream e strutturati 
 	 * per json+ld,microdata,RDFa
 	 * */
@@ -38,6 +37,8 @@ var estract= async function estract(page){
 						res["title"]= meta.attributes[i + 1].value;
 					}else if(value === "og:description"){
 						res["description"]= meta.attributes[i + 1].value;
+					}else if(value === "og:locale"){
+						res["language"]= meta.attributes[i + 1].value;
 					}
 				}else if(value.startsWith("twitter:player")){
 					if(value === "twitter:player" || value === "twitter:player:stream"){
