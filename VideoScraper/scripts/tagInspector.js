@@ -1,7 +1,7 @@
 
 // Tenta di trovare l'url cercando nel tag indicato dal selector
 var estract= async function estract(page,selector,attribute){
-
+	console.log("tag");
 	//cerco l'url nel selettore andando a prendere l'attributo specificato
 	const video = await page.evaluate((selector,attribute) => {
 		const videoElem=document.querySelector(selector);

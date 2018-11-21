@@ -2,6 +2,7 @@ const { getInfo } = require('ytdl-getinfo')
 
 var estract= async function estract(page){
 	//cerco il link alla pagina youtube 
+	console.log("youtube");
 	var youtubeLink = await page.evaluate(() => {
 		const node=document.querySelector("link[href*='https://www.youtube.com/watch?v=']");
 		if(node)

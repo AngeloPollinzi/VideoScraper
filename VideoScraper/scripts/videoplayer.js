@@ -8,12 +8,8 @@ var play = async function play(page){
 	}
 
 	const selectors=[];
-	selectors.push("div[class*='video']");
-	selectors.push("div[class*='player']");
-	selectors.push("img[class*='video']");
-	selectors.push("img[class*='player']");
-	selectors.push("figure[class*='video']");
-	selectors.push("figure[class*='player']");
+	selectors.push("[class*='video']");
+	selectors.push("[class*='player']");
 	
 	await page.evaluate((selectors) => {
 		var largestElem;  // l'elemento piu' grande

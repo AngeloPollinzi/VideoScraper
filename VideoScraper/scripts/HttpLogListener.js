@@ -1,9 +1,13 @@
 var outputGenerator=require("./outputGenerator.js");
 
 var listen= async function listen(page){
+	
 	page.on('response', async (response)=> {
+		
 		var output={};
+		
 		const status = response.status()
+		
 		if ( status && !(status > 299 && status < 400) && !(status === 204) ){
 			try{
 				var responseText=await response.text();
@@ -22,9 +26,8 @@ var listen= async function listen(page){
 						}
 					}
 			}catch(err){
-//				console.log("ERROR-############################");
+//				console.log("----------------HTTP-LOG ERROR-------------------------");
 //				console.log(err);
-//				console.log("ERROR-############################");
 			}
 		}
 	});
