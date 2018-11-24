@@ -1,9 +1,8 @@
 
-var estract= async function estract(page){
+var extract = async function extract(page){
 	/*Analizzatore dei metadati non strutturati per facebook open graph e twitter player stream e strutturati 
 	 * per json+ld,microdata,RDFa
 	 * */
-	console.log("metadata+json-ld");
 	let scripts= await page.$$("script[type='application/ld+json']");
 	for (const script of scripts) {
 		var content = await page.evaluate(el => el.innerText, script);
@@ -86,4 +85,4 @@ var estract= async function estract(page){
 	return output ;
 }
 
-module.exports.estract = estract;
+module.exports.extract = extract;

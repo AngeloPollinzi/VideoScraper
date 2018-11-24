@@ -1,5 +1,5 @@
 
-var estract= async function estract(page){
+var extract = async function extract(page){
 //vado a selezionare tutti i div nella pagina e succesivamente analizzo gli attributi di
 // ognuno alla ricerca di un attributo che inizi con "data-", caratteristica dei data attributes.
 	const data=await page.evaluate(() => {
@@ -20,6 +20,7 @@ var estract= async function estract(page){
 		if(jsonformat){
 			try{
 				var json=JSON.parse(jsonformat);
+				
 				if(json.playlist){
 					return json.playlist[0];
 				}
@@ -37,4 +38,4 @@ var estract= async function estract(page){
 	
 }
 
-module.exports.estract = estract;
+module.exports.extract = extract;

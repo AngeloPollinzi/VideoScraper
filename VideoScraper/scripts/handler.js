@@ -1,17 +1,17 @@
 const puppeteer = require('puppeteer');
 
 // task manager crea tutti i tipi di estrattori.
-var estractor1=require("./tagInspector.js");
-var estractor2=require("./youtube.js");
-var estractor3=require("./javascriptInspector.js");
-var estractor4=require("./dataAttributes.js");
-var estractor5=require("./metadataInspector.js");
-var HttpLogListener=require("./HttpLogListener.js");
+var extractor1=require("./tagInspector.js");
+var extractor2=require("./youtube.js");
+var extractor3=require("./javascriptInspector.js");
+var extractor4=require("./dataAttributes.js");
+var extractor5=require("./metadataInspector.js");
+var HttpLogListener=require("./httpLogListener.js");
 var videoplayer=require("./videoplayer.js");
 
 const urls = [
-	/*javascript*/ 'http://wqow.com/news/top-stories/2018/10/23/watch-live-search-for-evidence-in-barron-county/', 
 	/*javascript*/ 'http://www.espn.com/nfl/story/_/id/25206920/week-11-2018-nfl-power-rankings-season-defining-stats-every-defense', 
+	/*javascript*/ 'http://wqow.com/news/top-stories/2018/10/23/watch-live-search-for-evidence-in-barron-county/', 
 	/*javascript*/ 'https://www.ilfattoquotidiano.it/2018/10/31/savona-incendio-nel-porto-il-parcheggio-diventa-un-cimitero-di-auto-piu-di-1000-veicoli-tra-cui-molte-maserati-distrutte/4733636/', 
 	/*javascript*/ 'http://www.thevalleydispatch.com/',
 	/*javascript*/ 'https://video.corriere.it/rapallo-crolla-diga-foranea-spazzata-via-una-mareggiata/e2e47248-dba3-11e8-a9c5-62cf8efd543f?intcmp=pastiglione_lato_hp&vclk=pastiglione_lato%7Crapallo-crolla-diga-foranea-spazzata-via-una-mareggiata', 
@@ -73,92 +73,111 @@ const urls = [
 	
 	// man mano passo i miei url agli estrattori che mi restituiranno il
 	// risultato
-	let outputs;
-	let bestResult;
+	let all_outputs; 		//array dei risultati trovati
+	let final_output;			//risultato finale
 	
 	for (let i = 0; i < urls.length; i++) {
 	
 		const url = urls[i];
 		
 		await page.goto(url,{waitUntil:'domcontentloaded',timeout: 0});
-	
+
 		// analisi statica sul DOM e i child frames
-		bestResult = await analysis(page);
-//		 se il controllo statico fallisce provo faccio play e ripeto il controllo su DOM e child frames
-		if(!bestResult){
+		all_outputs= await analysis(page,0);
+		final_output=await final(all_outputs);
+		
+		//se il controllo statico fallisce provo faccio play e ripeto il controllo su DOM e child frames
+		if(!final_output){
+			
 			await videoplayer.play(page);
-			await page.waitFor(10000);
-			bestResult = await analysis(page);
-			if(!bestResult){
+//			await page.waitFor(10000);
+			all_outputs = await analysis(page,1);
+			final_output = await final(all_outputs);
+			
+			if(!final_output){
 				for (const frame of page.mainFrame().childFrames()){
-					bestResult = await analysis(frame);
-					if(bestResult)
+					all_outputs = await analysis(frame,0);
+					final_output = await final(all_outputs);
+					if(final_output)
 						break;
 				}
 			}
 		}
-		console.log(bestResult);
-		console.log("====================================================================");
+		
+		console.log("ALL:")
+		for(const o of all_outputs){
+			if(o)
+			console.log(o);
+		}
+//		console.log("FINAL:"+final_output);
+		console.log("===============================================================================");
+		
 	}
 	// quando ho finito chiudo il browser
 	await browser.close();
 })();
 
 
-async function analysis(doc){
+async function analysis(doc,flag){
 	
-	const results = await Promise.all([
-		estractor1.estract(doc,"video","src"),
-		estractor1.estract(doc,"video>source","src"),
-		estractor1.estract(doc,"object[data*='.swf'],object[data*='.mp4'],object[data*='.ogg'],object[data*='.webm']","data"),
-		estractor1.estract(doc,"iframe[src*='.mp4'],iframe[src*='.webm'],iframe[src*='.swf'],iframe[src*='.ogg']","src"),
-		estractor1.estract(doc,"embed[src*='.mp4'],embed[src*='.webm'],embed[src*='.swf'],embed[src*='.ogg']","src"),
-		estractor2.estract(doc), 
-		estractor3.estract(doc),
-		estractor4.estract(doc),
-		estractor5.estract(doc)
-	]).then(results => { 
-		return results;
-	});
-	console.log("analysis completed!");
-	return await isArticleVideo(doc,results);
+	let results;
+	
+	if(flag === 0){
+		 results = await Promise.all([
+			extractor1.extract(doc,"video","src"),
+			extractor1.extract(doc,"video>source","src"),
+			extractor1.extract(doc,"object[data*='.swf'],object[data*='.mp4'],object[data*='.ogg'],object[data*='.webm']","data"),
+			extractor1.extract(doc,"iframe[src*='.mp4'],iframe[src*='.webm'],iframe[src*='.swf'],iframe[src*='.ogg']","src"),
+			extractor1.extract(doc,"embed[src*='.mp4'],embed[src*='.webm'],embed[src*='.swf'],embed[src*='.ogg']","src"),
+			extractor2.extract(doc), 
+			extractor4.extract(doc),
+			extractor5.extract(doc)
+		]).then(outputs => { 
+			return outputs;
+		});
+	}else{
+		 results = await Promise.all([
+			extractor1.extract(doc,"video","src"),
+			extractor1.extract(doc,"video>source","src"),
+			extractor1.extract(doc,"object[data*='.swf'],object[data*='.mp4'],object[data*='.ogg'],object[data*='.webm']","data"),
+			extractor1.extract(doc,"iframe[src*='.mp4'],iframe[src*='.webm'],iframe[src*='.swf'],iframe[src*='.ogg']","src"),
+			extractor1.extract(doc,"embed[src*='.mp4'],embed[src*='.webm'],embed[src*='.swf'],embed[src*='.ogg']","src"),
+			extractor2.extract(doc),
+			extractor4.extract(doc),
+			extractor5.extract(doc),
+		]).then(async outputs => { 
+			HttpLogListener.listen(doc,outputs);
+			console.log("Listening...");
+			await doc.waitFor(30000);
+			await getLogContent(outputs);
+			console.log("Stop listening...");
+			HttpLogListener.stop(doc,outputs);
+			outputs.push(await extractor3.extract(doc));
+			return outputs;
+		});
+	}
+	return results;
 }
 
-
-
-async function isArticleVideo(page,outputs){
-	//vado a cercare nei metadati il titolo dell'articolo e succesivamente lo confronto
-	//con l'output per riscontrare similitudini
-	const levenshtein = require("fast-levenshtein");
-	
-	const value = await page.evaluate(() => {
-		let meta= document.querySelector("meta[property*='title']");
-		if(meta)
-			return meta.content ? meta.content: null;
-		else return null;
-	});
-	
-	var minNumDifferences=Number.MAX_SAFE_INTEGER;
-	var bestOutput;
-	if(value){
-		for (let k = 0; k < outputs.length; k++) {
-			if(outputs[k] && outputs[k].url){
-				var outputElem;
-				if(outputs[k].name){
-					outputElem = outputs[k].name;
-				}else if(outputs[k].title){
-					outputElem = outputs[k].title;
-				}else if(outputs[k].description){
-					outputElem = outputs[k].description;
-				}
-				console.log("EVALUATE ===> "+value+" *** "+outputElem)
-				var numDifferences = levenshtein.get(value,outputElem);
-				if(numDifferences < minNumDifferences){
-					minNumDifferences = numDifferences;
-					bestOutput = outputs[k];
-				}
-			}
+async function final(outputs){
+	for (let i = 0; i < outputs.length; i++) {
+		if(outputs[i] && outputs[i].url){
+			return outputs[i];
 		}
 	}
-	return bestOutput;
+	return null;
+}
+
+async function getLogContent(outputs){
+	
+	var lineReader = require('readline').createInterface({
+		  input: require('fs').createReadStream('../log/outputs')
+	});
+
+	lineReader.on('line', function (line) {
+		outputs.push(JSON.parse(line));
+	});
+	
+	var fs = require('fs');
+	fs.truncate('../log/outputs', function(){});
 }
