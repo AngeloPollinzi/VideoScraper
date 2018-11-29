@@ -8,12 +8,11 @@ var play = async function play(page){
 	}
 
 	const selectors=[];
-	selectors.push("[class*='video']");
-	selectors.push("[class*='player']");
+	selectors.push("div[class*='video']");
+	selectors.push("div[class*='player']");
 	
 	await page.evaluate((selectors) => {
 		var largestElem;  // l'elemento piu' grande
-		try{ 
 			//funzione che va a restituire un array ordinato in modo crescente in base alle dimensioni
 			function scanSizes(root) {
 				return [].map.call(root, function(node) {
@@ -29,16 +28,13 @@ var play = async function play(page){
 				var sizes;
 				if(elements){
 					sizes=scanSizes(elements);
-					largestElem = sizes[sizes.length-1];
+					largestElem = sizes[0];
 					if(largestElem){
 						largestElem.click();
 						return ;
 					}
 				}
 			}
-		}catch(err){
-			console.log(err);
-		}
 	}, selectors );
 }
 
