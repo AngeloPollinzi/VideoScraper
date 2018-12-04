@@ -2,6 +2,7 @@
 var play = async function play(page){
 
 	const video=await page.$('video');
+	
 	if(video){
 		video.click();
 		return;
@@ -9,7 +10,11 @@ var play = async function play(page){
 
 	const selectors=[];
 	selectors.push("div[class*='video']");
-	selectors.push("div[class*='player']");
+	selectors.push("div[class*='play']");
+	selectors.push("figure[class*='video']");
+	selectors.push("figure[class*='play']");
+	selectors.push("img[class*='video']");
+	selectors.push("img[class*='play']");
 	
 	await page.evaluate((selectors) => {
 		var largestElem;  // l'elemento piu' grande

@@ -3,7 +3,7 @@ fs = require('fs');
 
 var htmlFile;
 
-fs.readFile('./index.html', function(err, data) {
+fs.readFile('../Web/index.html', function(err, data) {
     if (err){
         throw err;
     }

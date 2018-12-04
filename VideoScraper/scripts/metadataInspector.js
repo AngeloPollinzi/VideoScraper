@@ -1,22 +1,21 @@
+const jsonHandler=require("./jsonHandler.js");
 
 var extract = async function extract(page){
 	/*Analizzatore dei metadati non strutturati per facebook open graph e twitter player stream e strutturati 
 	 * per json+ld,microdata,RDFa
 	 * */
+	let output={};
+	
 	let scripts= await page.$$("script[type='application/ld+json']");
 	for (const script of scripts) {
 		var content = await page.evaluate(el => el.innerText, script);
-		try{
-			var json= JSON.parse(content);
-			if(json.video){
-				return json.video;
-			}else if(json['@type'] === "VideoObject"){
-				return json;
-			}
-		}catch(err){console.log("json-ld parse error");}
+		var json=jsonHandler.extractJSON(content);
+		jsonHandler.getOutput(output,json);
+		if(!jsonHandler.isEmpty(output))
+			return output;
 	}
 	
-	const output = await page.evaluate(() => {
+	 output = await page.evaluate(() => {
 		var res={};
 		let metas= Array.from(document.querySelectorAll("meta,[itemtype='http://schema.org/VideoObject'] meta,[typeof='VideoObject'] meta"));
 		
@@ -41,9 +40,11 @@ var extract = async function extract(page){
 							res["description"]= meta.attributes[i + 1].value;
 						}else if(value === "og:locale"){
 							res["language"]= meta.attributes[i + 1].value;
+						}else if(value === "og:video:duration" || value === "video:duration"){
+							res["duration"]= meta.attributes[i + 1].value;
 						}
 					}else if(value.startsWith("twitter:player") && meta.attributes[i + 1]){
-						if(value === "twitter:player" || value === "twitter:player:stream"){
+						if(value === "twitter:player:stream"){
 							res["url"]=meta.attributes[i + 1].value;
 						}else if(value === "twitter:player:width"){
 							res["width"]=meta.attributes[i + 1].value;

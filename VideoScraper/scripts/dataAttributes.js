@@ -44,15 +44,15 @@ var extract = async function extract(page){
 		}
 	});
 	
-var output={};
-
-for(const item of data){
-	if(item && jsonHandler.containsVideoURL(item)){
-		var jsonformat= jsonHandler.extractJSON(item);
-		jsonHandler.getOutput(output,jsonformat);
-		return output;
+	var output={};
+	
+	for(const item of data){
+		if(item && jsonHandler.containsVideoURL(item)){
+			var jsonformat= jsonHandler.extractJSON(item);
+			jsonHandler.getOutput(output,jsonformat);
+			return output;
+		}
 	}
-}
 	
 }
 

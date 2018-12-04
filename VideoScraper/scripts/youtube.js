@@ -11,14 +11,17 @@ var extract = async function extract(page){
 
 	if(youtubeLink){
 		var output={};
-		youtubedl.getInfo(youtubeLink, function(err, info) {
-			if(err) throw err;
-			output["url"]=info.url;
-			output["title"]=info.title;
-			output["duration"]=info.duration;
-			output["upload_date"]=info.upload_date;
-			output["resolution"]=info.resolution;
-			output["description"]=info.description;
+		youtubedl.getInfo(youtubeLink,[],{maxBuffer: 1000*1024}, function(err, info) {
+			if(err){ 
+				console.log("Youtube-dl internal ERROR");
+			}else{
+				output["url"]=info.url;
+				output["title"]=info.title;
+				output["duration"]=info.duration;
+				output["upload_date"]=info.upload_date;
+				output["resolution"]=info.format;
+				output["description"]=info.description;
+			}
 		});
 		await page.waitFor(10000);
 		return output;
